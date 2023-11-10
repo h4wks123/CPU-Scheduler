@@ -80,7 +80,7 @@ def srtf_scheduling(processes):
     print("Gantt Chart:")
     i = 0
 
-    while i < len(sequence):
+    while i < len(sequence): #Stored value starts at one
         current_process = sequence[i][0]
         start_time = sequence[i][1]
 
@@ -90,13 +90,15 @@ def srtf_scheduling(processes):
         end_time = sequence[i][1]
 
         if start_time == end_time:  # If the process only occurs at a single time point
-            print(f" {current_process} ({start_time}) | ", end="")
+            if start_time == 1:
+                print(f" {current_process} ({0}-{1}) | ", end="")
+            else:
+                print(f" {current_process} ({start_time}) | ", end="")
         else:
             if start_time == 1:
                 print(f"{current_process} ({start_time - 1}-{end_time}) | ", end="")
             else:
                 print(f" {current_process} ({start_time}-{end_time}) | ", end="")
-
         i += 1
 
     print()
@@ -106,11 +108,11 @@ def srtf_scheduling(processes):
 if __name__ == "__main__":
     # Test Case: 5 processes
     processes_test = [
-        Process(1, 4, 5),
-        Process(2, 8, 10),
-        Process(3, 3, 7),
-        Process(4, 6, 8),
-        Process(5, 0, 6)
+        Process(1, 2, 10),
+        Process(2, 13, 9),
+        Process(3, 20, 7),
+        Process(4, 1, 3),
+        Process(5, 11, 11)
     ]
 
     sequence = srtf_scheduling(processes_test)
@@ -120,3 +122,10 @@ if __name__ == "__main__":
 
     print(f"Average Turnaround Time: {avg_tt(processes_test):.2f}")
     print(f"Average Waiting Time: {avg_wt(processes_test):.2f}")
+
+        # Second Test Case
+        # Process(1, 3, 4),
+        # Process(2, 5, 9),
+        # Process(3, 8, 4),
+        # Process(4, 0, 7),
+        # Process(5, 12, 6)
