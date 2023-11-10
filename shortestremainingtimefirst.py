@@ -24,12 +24,11 @@ def avg_tt(processes):
         sum_tt += p.turnaround_time
     return sum_tt / len(processes)
 
-def cpu_util(processes):
-    total_idle_time = sum(1 for process in processes if process.process_num == 'idle')
-    if (total_idle_time > 0):
-       print(f"CPU Utilization: {(total_idle_time / len(processes)) * 100:.2f}%")
-    else:
-        print(f"CPU Utilization: {(total_idle_time / len(processes)) * 100:.2f}%")
+def cpu_util(sequence):
+    total_idle_time = sum(1 for process, _ in sequence if process == 'idle')
+    total_time = sequence[-1][1]  # Assuming the last entry in the sequence is the completion time
+    utilization = ((total_time - total_idle_time) / total_time) * 100
+    print(f"CPU Utilization: {utilization:.2f}%")
 
 def display_table(processes):
     print()
@@ -77,6 +76,7 @@ def srtf_scheduling(processes):
         if all(time == 0 for time in remaining_time):
             break
     
+    
     print("Gantt Chart:")
     i = 0
 
@@ -100,6 +100,8 @@ def srtf_scheduling(processes):
         i += 1
 
     print()
+    return sequence  # Add this line at the end of the function
+
 
 if __name__ == "__main__":
     # Test Case: 5 processes
@@ -112,7 +114,10 @@ if __name__ == "__main__":
     ]
 
     srtf_scheduling(processes_test)
+    sequence = srtf_scheduling(processes_test)
+
     display_table(processes_test)
-    cpu_util(processes_test)
+    cpu_util(sequence)
+
     print(f"Average Turnaround Time: {avg_tt(processes_test):.2f}")
     print(f"Average Waiting Time: {avg_wt(processes_test):.2f}")
