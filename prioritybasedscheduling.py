@@ -5,19 +5,53 @@ class Process:
         self.burst_time = burst_time
         self.priority = priority
         self.remaining_time = burst_time
+        self.completion_time = 0
+        self.turnaround_time = 0  
+        self.waiting_time = 0 
 
-def priority_preemptive_scheduling(processes):
+def avg_wt(processes):
+    sum_wt = 0
+    for p in processes:
+        sum_wt += p.waiting_time
+    return sum_wt / len(processes)
+
+def avg_tt(processes):
+    sum_tt = 0
+    for p in processes:
+        sum_tt += p.turnaround_time
+    return sum_tt / len(processes)
+
+def cpu_util(sequence): #NOT YET FINISHED
+    total_idle_time = sum(1 for process, _ in sequence if process == 'idle')  # Change 'idle' to 'Idle'
+    # total_time = sequence[0][1]  # Assuming the last entry in the sequence is the completion time
+    # utilization = ((total_time - total_idle_time) / total_time) * 100
+    # print(f"CPU Utilization: {utilization:.2f}%")
+    
+def display_table_with_results(processes):
+    print()
+    print("Table for processes:")
+    print("{:<15} {:<14} {:<11} {:<11} {:<17} {:<17} {:<12}".format(
+        "Process Number", "Arrival Time", "Burst Time", "Priority Level", "Completion Time", "Turnaround Time", "Waiting Time"))
+    for p in processes:
+        print("{:<15} {:<14} {:<11} {:<17} {:<17} {:<17} {:<12}".format(
+            p.name, p.arrival_time, p.burst_time, p.priority, p.completion_time, p.turnaround_time, p.waiting_time))
+    print()
+
+def priority_preemptive_scheduling_with_gantt(processes):
     time_chart = []
     current_time = 0
 
     # Sort processes based on arrival time and priority
     processes.sort(key=lambda x: (x.arrival_time, x.priority))
 
+    # Create a copy of the processes list to store the results
+    result_processes = processes.copy()
+
     while processes:
         ready_processes = [p for p in processes if p.arrival_time <= current_time]
         if not ready_processes:
             # No process is ready, add idle time to the Gantt chart
-            time_chart.append((current_time, "Idle"))
+            time_chart.append((current_time, "idle"))
             current_time += 1
             continue
 
@@ -31,13 +65,18 @@ def priority_preemptive_scheduling(processes):
         selected_process.remaining_time -= 1
         current_time += 1
 
+        # Check if the process is completed
+        if selected_process.remaining_time == 0:
+            # Update completion time, turnaround time, and waiting time
+            selected_process.completion_time = current_time
+            selected_process.turnaround_time = current_time - selected_process.arrival_time
+            selected_process.waiting_time = selected_process.turnaround_time - selected_process.burst_time
+
         # Remove the process if it's completed
         if selected_process.remaining_time == 0:
             processes.remove(selected_process)
 
-    return time_chart
-
-def display_gantt_chart(time_chart): #Starts at zero
+    # Display Gantt Chart
     print("Gantt Chart:")
     i = 0
     while i < len(time_chart):
@@ -61,18 +100,42 @@ def display_gantt_chart(time_chart): #Starts at zero
         i += 1
 
     print()
+    
+    # Display the table using the copied list with results
+    display_table_with_results(result_processes)
+
+    print(f"Average Turnaround Time: {avg_tt(result_processes):.2f}")
+    print(f"Average Waiting Time: {avg_wt(result_processes):.2f}")
+
+    return time_chart
 
 if __name__ == "__main__":
     processes = [
-        Process("P1", 2, 10, 1),
-        Process("P2", 13, 9, 2),
-        Process("P3", 20, 7, 4),
-        Process("P4", 1, 3, 5),
-        Process("P5", 11, 11, 3)
+        Process("P1", 1, 5, 3),
+        Process("P2", 3, 7, 2),
+        Process("P3", 6, 3, 1),
+        Process("P4", 9, 8, 4),
+        Process("P5", 11, 6, 5)
     ]
 
-    time_chart = priority_preemptive_scheduling(processes)
-    display_gantt_chart(time_chart)
+    sequence = priority_preemptive_scheduling_with_gantt(processes)
+    cpu_util(sequence)
+
+
+
+
+
+
+
+
+
+
+        # First Test Case
+        # Process("P1", 2, 10, 1),
+        # Process("P2", 13, 9, 2),
+        # Process("P3", 20, 7, 4),
+        # Process("P4", 1, 3, 5),
+        # Process("P5", 11, 11, 3)
 
         # Second Test Case
         # Process("P1", 3, 4, 2),
@@ -80,3 +143,17 @@ if __name__ == "__main__":
         # Process("P3", 8, 4, 2),
         # Process("P4", 0, 7, 1),
         # Process("P5", 12, 6, 1)
+
+        # Third Test Case
+        # Process("P1", 1, 5, 3),
+        # Process("P2", 3, 7, 2),
+        # Process("P3", 6, 3, 1),
+        # Process("P4", 9, 8, 4),
+        # Process("P5", 11, 6, 5)
+
+        # Fourth Test Case
+        # Process("P1", 0, 6, 2),
+        # Process("P2", 2, 8, 1),
+        # Process("P3", 4, 5, 3),
+        # Process("P4", 7, 7, 4),
+        # Process("P5", 10, 9, 2)
