@@ -106,14 +106,13 @@ def srtf_scheduling(processes):
 if __name__ == "__main__":
     # Test Case: 5 processes
     processes_test = [
-        Process(1, 3, 4),
-        Process(2, 9, 5),
-        Process(3, 10, 9),
-        Process(4, 8, 12),
-        Process(5, 12, 10)
+        Process(1, 4, 5),
+        Process(2, 8, 10),
+        Process(3, 3, 7),
+        Process(4, 6, 8),
+        Process(5, 0, 6)
     ]
 
-    srtf_scheduling(processes_test)
     sequence = srtf_scheduling(processes_test)
 
     display_table(processes_test)
