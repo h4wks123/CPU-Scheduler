@@ -1,81 +1,147 @@
-class Process:
-    def __init__(self, name, arrival_time, burst_time, priority):
-        self.name = name
-        self.arrival_time = arrival_time
-        self.burst_time = burst_time
-        self.priority = priority
-        self.remaining_time = burst_time
+class RoundRobin:
+    @staticmethod
+    def schedulingProcess(process_data, time_slice):
+        start_time = []
+        exit_time = []
+        executed_process = []
+        ready_queue = []
+        s_time = 0
+        process_data.sort(key=lambda x: x[1])
 
-def priority_preemptive_scheduling(processes):
-    time_chart = []
-    current_time = 0
+        # Initialize the last two columns of process_data
+        for i in range(len(process_data)):
+            process_data[i].extend([0, process_data[i][2]])
 
-    # Sort processes based on arrival time and priority
-    processes.sort(key=lambda x: (x.arrival_time, x.priority))
+        while 1:
+            normal_queue = []
+            temp = []
+            for i in range(len(process_data)):
+                if process_data[i][1] <= s_time and process_data[i][3] == 0:
+                    present = 0
+                    if len(ready_queue) != 0:
+                        for k in range(len(ready_queue)):
+                            if process_data[i][0] == ready_queue[k][0]:
+                                present = 1
 
-    while processes:
-        ready_processes = [p for p in processes if p.arrival_time <= current_time]
-        if not ready_processes:
-            # No process is ready, add idle time to the Gantt chart
-            time_chart.append((current_time, "Idle"))
-            current_time += 1
-            continue
+                    if present == 0:
+                        temp.extend([process_data[i][0], process_data[i][1], process_data[i][2], process_data[i][4]])
+                        ready_queue.append(temp)
+                        temp = []
 
-        # Select the process with the highest priority
-        selected_process = min(ready_processes, key=lambda x: x.priority)
+                    if len(ready_queue) != 0 and len(executed_process) != 0:
+                        for k in range(len(ready_queue)):
+                            if ready_queue[k][0] == executed_process[len(executed_process) - 1]:
+                                ready_queue.insert((len(ready_queue) - 1), ready_queue.pop(k))
 
-        # Update the Gantt chart
-        time_chart.append((current_time, selected_process.name))
+                elif process_data[i][3] == 0:
+                    temp.extend([process_data[i][0], process_data[i][1], process_data[i][2], process_data[i][4]])
+                    normal_queue.append(temp)
+                    temp = []
 
-        # Reduce remaining time of the selected process
-        selected_process.remaining_time -= 1
-        current_time += 1
+            if len(ready_queue) == 0 and len(normal_queue) == 0:
+                break
 
-        # Remove the process if it's completed
-        if selected_process.remaining_time == 0:
-            processes.remove(selected_process)
+            if len(ready_queue) != 0:
+                if ready_queue[0][2] > time_slice:
+                    start_time.append(s_time)
+                    s_time = s_time + time_slice
+                    e_time = s_time
+                    exit_time.append(e_time)
+                    executed_process.append(ready_queue[0][0])
+                    for j in range(len(process_data)):
+                        if process_data[j][0] == ready_queue[0][0]:
+                            break
+                    process_data[j][2] = process_data[j][2] - time_slice
+                    ready_queue.pop(0)
+                elif ready_queue[0][2] <= time_slice:
+                    start_time.append(s_time)
+                    s_time = s_time + ready_queue[0][2]
+                    e_time = s_time
+                    exit_time.append(e_time)
+                    executed_process.append(ready_queue[0][0])
+                    for j in range(len(process_data)):
+                        if process_data[j][0] == ready_queue[0][0]:
+                            break
+                    process_data[j][2] = 0
+                    process_data[j][3] = 1
+                    process_data[j].append(e_time)
+                    ready_queue.pop(0)
+            elif len(ready_queue) == 0:
+                if s_time < normal_queue[0][1]:
+                    s_time = normal_queue[0][1]
+                if normal_queue[0][2] > time_slice:
+                    start_time.append(s_time)
+                    s_time = s_time + time_slice
+                    e_time = s_time
+                    exit_time.append(e_time)
+                    executed_process.append(normal_queue[0][0])
+                    for j in range(len(process_data)):
+                        if process_data[j][0] == normal_queue[0][0]:
+                            break
+                    process_data[j][2] = process_data[j][2] - time_slice
+                elif normal_queue[0][2] <= time_slice:
+                    start_time.append(s_time)
+                    s_time = s_time + normal_queue[0][2]
+                    e_time = s_time
+                    exit_time.append(e_time)
+                    executed_process.append(normal_queue[0][0])
+                    for j in range(len(process_data)):
+                        if process_data[j][0] == normal_queue[0][0]:
+                            break
+                    process_data[j][2] = 0
+                    process_data[j][3] = 1
+                    process_data[j].append(e_time)
 
-    return time_chart
+        t_time = RoundRobin.calculateTurnaroundTime(process_data)
+        w_time = RoundRobin.calculateWaitingTime(process_data)
+        
+        RoundRobin.printData(process_data, t_time, w_time, executed_process)
 
-def display_gantt_chart(time_chart): #Starts at zero
-    print("Gantt Chart:")
-    i = 0
-    while i < len(time_chart):
-        start_time, process_name = time_chart[i]
+    @staticmethod
+    def calculateTurnaroundTime(process_data):
+        total_turnaround_time = 0
+        for i in range(len(process_data)):
+            turnaround_time = process_data[i][5] - process_data[i][1]
+            total_turnaround_time = total_turnaround_time + turnaround_time
+            process_data[i].append(turnaround_time)
+        average_turnaround_time = total_turnaround_time / len(process_data)
+        return average_turnaround_time
 
-        while i + 1 < len(time_chart) and process_name == time_chart[i + 1][1]:
-            i += 1        
+    @staticmethod
+    def calculateWaitingTime(process_data):
+        total_waiting_time = 0
+        for i in range(len(process_data)):
+            waiting_time = process_data[i][6] - process_data[i][4]
+            total_waiting_time = total_waiting_time + waiting_time
+            process_data[i].append(waiting_time)
+        average_waiting_time = total_waiting_time / len(process_data)
+        return average_waiting_time
 
-        end_time = time_chart[i][0]
+    @staticmethod
+    def printData(process_data, average_turnaround_time, average_waiting_time, executed_process):
+        process_data.sort(key=lambda x: x[0])
+        print("Table for processes:")
+        print("{:<15} {:<14} {:<11} {:<11} {:<17} {:<17} {:<12}".format(
+            "Process Number", "Arrival Time", "Burst Time", "Time Quantum", "Completion Time", "Turnaround Time", "Waiting Time"))
+        for i in range(len(process_data)):
+            print("{:<15} {:<14} {:<11} {:<11} {:<17} {:<17} {:<12}".format(
+                process_data[i][0], process_data[i][1], process_data[i][2], process_data[i][3],
+                process_data[i][7], process_data[i][5], process_data[i][6]))
+        print(f'Average Turnaround Time: {average_turnaround_time}')
+        print(f'Average Waiting Time: {average_waiting_time}')
+        print(f'Sequence of Processes: {executed_process}')
 
-        if start_time == end_time:  # If the process only occurs at a single time point
-            if start_time == 0:
-                print(f" {process_name} ({0}-{1}) | ", end="")
-            else:
-                print(f" {process_name} ({start_time}) | ", end="")
-        else:
-            if start_time == 0:
-                print(f"{process_name} ({start_time - 1}-{end_time}) | ", end="")
-            else:
-                print(f" {process_name} ({start_time}-{end_time}) | ", end="")
-        i += 1
 
-    print()
 
 if __name__ == "__main__":
-    processes = [
-        Process("P1", 2, 10, 1),
-        Process("P2", 13, 9, 2),
-        Process("P3", 20, 7, 4),
-        Process("P4", 1, 3, 5),
-        Process("P5", 11, 11, 3)
+    processes_test = [
+        [1, 3, 4],
+        [2, 5, 9],
+        [3, 8, 4],
+        [4, 0, 7],
+        [5, 12, 6]
     ]
 
-    time_chart = priority_preemptive_scheduling(processes)
-    display_gantt_chart(time_chart)
+    time_quantum = 3
 
-        # Process("P1", 3, 4, 2),
-        # Process("P2", 5, 9, 1),
-        # Process("P3", 8, 4, 2),
-        # Process("P4", 0, 7, 1),
-        # Process("P5", 12, 6, 1)
+    RoundRobin.schedulingProcess(processes_test, time_quantum)

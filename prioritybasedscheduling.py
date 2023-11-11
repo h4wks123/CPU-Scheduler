@@ -21,13 +21,17 @@ def avg_tt(processes):
         sum_tt += p.turnaround_time
     return sum_tt / len(processes)
 
-def cpu_util(sequence): #NOT YET FINISHED
-    total_idle_time = sum(1 for process, _ in sequence if process == 'idle')  # Change 'idle' to 'Idle'
-    # total_time = sequence[0][1]  # Assuming the last entry in the sequence is the completion time
-    # utilization = ((total_time - total_idle_time) / total_time) * 100
-    # print(f"CPU Utilization: {utilization:.2f}%")
+def cpu_util(sequence):
+    total_idle_time = sum(1 for _, process in sequence if process == 'idle')
+    total_time = sequence[-1][0] + 1  # Assuming the last entry in the sequence is the completion time
+    utilization = ((total_time - total_idle_time) / total_time) * 100
+    print(f"CPU Utilization: {utilization:.2f}%")
+
     
 def display_table_with_results(processes):
+    # Sort processes based on their original order (by name)
+    processes.sort(key=lambda x: x.name)
+
     print()
     print("Table for processes:")
     print("{:<15} {:<14} {:<11} {:<11} {:<17} {:<17} {:<12}".format(
@@ -36,6 +40,8 @@ def display_table_with_results(processes):
         print("{:<15} {:<14} {:<11} {:<17} {:<17} {:<17} {:<12}".format(
             p.name, p.arrival_time, p.burst_time, p.priority, p.completion_time, p.turnaround_time, p.waiting_time))
     print()
+
+
 
 def priority_preemptive_scheduling_with_gantt(processes):
     time_chart = []
@@ -59,7 +65,7 @@ def priority_preemptive_scheduling_with_gantt(processes):
         selected_process = min(ready_processes, key=lambda x: x.priority)
 
         # Update the Gantt chart
-        time_chart.append((current_time, selected_process.name))
+        time_chart.append((current_time, f'P{selected_process.name}'))
 
         # Reduce remaining time of the selected process
         selected_process.remaining_time -= 1
@@ -111,11 +117,11 @@ def priority_preemptive_scheduling_with_gantt(processes):
 
 if __name__ == "__main__":
     processes = [
-        Process("P1", 1, 5, 3),
-        Process("P2", 3, 7, 2),
-        Process("P3", 6, 3, 1),
-        Process("P4", 9, 8, 4),
-        Process("P5", 11, 6, 5)
+        Process(1, 3, 4, 2),
+        Process(2, 5, 9, 1),
+        Process(3, 8, 4, 2),
+        Process(4, 0, 7, 1),
+        Process(5, 12, 6, 1)
     ]
 
     sequence = priority_preemptive_scheduling_with_gantt(processes)
@@ -131,29 +137,36 @@ if __name__ == "__main__":
 
 
         # First Test Case
-        # Process("P1", 2, 10, 1),
-        # Process("P2", 13, 9, 2),
-        # Process("P3", 20, 7, 4),
-        # Process("P4", 1, 3, 5),
-        # Process("P5", 11, 11, 3)
+        # Process(1, 2, 10, 1),
+        # Process(2, 13, 9, 2),
+        # Process(3, 20, 7, 4),
+        # Process(4, 1, 3, 5),
+        # Process(5, 11, 11, 3)
 
         # Second Test Case
-        # Process("P1", 3, 4, 2),
-        # Process("P2", 5, 9, 1),
-        # Process("P3", 8, 4, 2),
-        # Process("P4", 0, 7, 1),
-        # Process("P5", 12, 6, 1)
+        # Process(1, 3, 4, 2),
+        # Process(2, 5, 9, 1),
+        # Process(3, 8, 4, 2),
+        # Process(4, 0, 7, 1),
+        # Process(5, 12, 6, 1)
 
         # Third Test Case
-        # Process("P1", 1, 5, 3),
-        # Process("P2", 3, 7, 2),
-        # Process("P3", 6, 3, 1),
-        # Process("P4", 9, 8, 4),
-        # Process("P5", 11, 6, 5)
+        # Process(1, 1, 5, 3),
+        # Process(2, 3, 7, 2),
+        # Process(3, 6, 3, 1),
+        # Process(4, 9, 8, 4),
+        # Process(5, 11, 6, 5)
 
         # Fourth Test Case
-        # Process("P1", 0, 6, 2),
-        # Process("P2", 2, 8, 1),
-        # Process("P3", 4, 5, 3),
-        # Process("P4", 7, 7, 4),
-        # Process("P5", 10, 9, 2)
+        # Process(1, 0, 6, 2),
+        # Process(2, 2, 8, 1),
+        # Process(3, 4, 5, 3),
+        # Process(4, 7, 7, 4),
+        # Process(5, 10, 9, 2)
+
+        # Fifth Test Case
+        # Process(1, 9, 10, 1),
+        # Process(2, 13, 9, 2),
+        # Process(3, 10, 7, 4),
+        # Process(4, 3, 3, 5),
+        # Process(5, 11, 11, 3)

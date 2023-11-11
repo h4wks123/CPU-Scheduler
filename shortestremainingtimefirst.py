@@ -108,11 +108,11 @@ def srtf_scheduling(processes):
 if __name__ == "__main__":
     # Test Case: 5 processes
     processes_test = [
-        Process(1, 2, 10),
-        Process(2, 13, 9),
-        Process(3, 20, 7),
-        Process(4, 1, 3),
-        Process(5, 11, 11)
+        Process(1, 4, 5),
+        Process(2, 8, 10),
+        Process(3, 3, 7),
+        Process(4, 6, 8),
+        Process(5, 0, 6)
     ]
 
     sequence = srtf_scheduling(processes_test)
@@ -129,3 +129,10 @@ if __name__ == "__main__":
         # Process(3, 8, 4),
         # Process(4, 0, 7),
         # Process(5, 12, 6)
+
+        # Third Test Case
+        # Process(1, 3, 4),
+        # Process(2, 9, 5),
+        # Process(3, 10, 9),
+        # Process(4, 8, 12),
+        # Process(5, 12, 10)
