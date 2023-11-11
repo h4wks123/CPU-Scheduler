@@ -45,6 +45,8 @@ def input_process(process_num):
     return Process(process_num, arrival_time, burst_time)       
             
 def display_table(processes):
+    #make the table display processes in order of process number/id
+    processes = sorted(processes, key=lambda p: p.process_num)
     print()
     print("Table for processes:")
     print("{:<15} {:<14} {:<11} {:<17} {:<17} {:<12}".format(
@@ -64,14 +66,14 @@ def make_ganttchart(processes):
     ganttchart = []
     for p in processes:
         if p.arrival_time > current_time:
-            #idle_time = p.arrival_time - current_time
             ganttchart.append(("idle", current_time, p.arrival_time))
             current_time = p.arrival_time
         ganttchart.append((f"P{p.process_num}", current_time, current_time + p.burst_time))
         current_time += p.burst_time
         
-    print()
+    #print the gantt chart
     print("Gantt Chart:")
+    '''
     #print the process number/id
     for x in ganttchart:
         print("{:<5}|".format(x[0]), end=" ")
@@ -81,7 +83,21 @@ def make_ganttchart(processes):
         print("{:<5}".format(x[1]), end=" ")
     #print end time of last element in gantt
     print(ganttchart[-1][2])
-                
+    '''
+    # Print the gantt chart
+    print("|", end=" ")
+    for i, x in enumerate(ganttchart):
+        if i == 0:
+            if x[1] == x[2]:
+                print(f"{x[0]} ({x[1]}) |", end=" ")
+            else:
+                print(f"{x[0]} ({x[1]}-{x[2]}) |", end=" ")
+        else:
+            if x[1] == x[2]:
+                print(f"{x[0]} ({x[1]}) |", end=" ")
+            else:
+                print(f"{x[0]} ({x[1]+1}-{x[2]}) |", end=" ")
+    print()
         
         
         
@@ -89,11 +105,27 @@ def make_ganttchart(processes):
 print()
 print("First-Come-First-Serve CPU Scheduling Algorithm")
 print()
+
+#use this if you want to input the process details yourself
+'''
 num_of_processes = int(input("Enter the number of processes included: "))
 processes = []
 
 for x in range(1, num_of_processes + 1):
     processes.append(input_process(x))
+'''
+
+#testing algo without input
+processes = [
+        Process(1, 5, 5),
+        Process(2, 6, 10),
+        Process(3, 8, 7),
+        Process(4, 1, 2),
+        Process(5, 12, 6)
+    ]
+num_of_processes = 5
+
+
     
 #rearrangement of process based on algo
 processes = fcfs_algo(processes)   
@@ -112,3 +144,4 @@ display_table(processes)
 cpu_util(processes)
 avg_tt(processes)
 avg_wt(processes)
+
