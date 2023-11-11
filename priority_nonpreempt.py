@@ -121,11 +121,11 @@ for x in range(1, num_of_processes + 1):
 
 #testing algo without input
 processes = [
-        Process(1, 5, 5, 2),
-        Process(2, 6, 10, 6),
-        Process(3, 8, 7, 3),
-        Process(4, 1, 2, 5),
-        Process(5, 12, 6, 7)
+        Process(1, 3, 4, 2),
+        Process(2, 5, 9, 1),
+        Process(3, 8, 4, 2),
+        Process(4, 0, 7, 1),
+        Process(5, 12, 6, 1)
     ]
 num_of_processes = 5
 

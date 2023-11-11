@@ -114,31 +114,31 @@ class RoundRobin:
 
         print(f'Gantt Chart:')
         start_index = 0
+
         for i in range(len(executed_process) - 1):
             if (min_arrival_time != 0):
                 if (min_arrival_time == 1):
-                    print(f'idle ({0})', end=" | ")
-                    start_index = 1
+                    print(f'idle ({0} - {1})', end=" | ")
+                    start_index = min_arrival_time + 1
                     min_arrival_time = 0
                 else:
-                    print(f'idle ({0} - {executed_process[i][1]})', end=" | ")
+                    print(f'idle ({0} - {min_arrival_time})', end=" | ")
+                    start_index = min_arrival_time + 1
+                    min_arrival_time = 0
+            if (start_index == 0):
+                if (start_index == executed_process[i][1] - 1):
+                    print(f'P{executed_process[i][0]} ({0})', end=" | ")
                     start_index = executed_process[i][1] + 1
-                    min_arrival_time = 0
-            else:
-                if (start_index == 0):
-                    if (start_index == executed_process[i][1] - 1):
-                        print(f'P{executed_process[i][0]} ({0})', end=" | ")
-                        start_index = executed_process[i][1] + 1
-                    else:
-                        print(f'P{executed_process[i][0]} ({0} - {executed_process[i][1]})', end=" | ")
-                        start_index = executed_process[i][1] + 1
                 else:
-                    if (start_index == executed_process[i][1]):
-                        print(f'P{executed_process[i][0]} ({start_index})', end=" | ")
-                        start_index = executed_process[i][1] + 1
-                    else:
-                        print(f'P{executed_process[i][0]} ({start_index} - {executed_process[i][1]})', end=" | ")
-                        start_index = executed_process[i][1] + 1
+                    print(f'P{executed_process[i][0]} ({0} - {executed_process[i][1]})', end=" | ")
+                    start_index = executed_process[i][1] + 1
+            else:
+                if (start_index == executed_process[i][1]):
+                    print(f'P{executed_process[i][0]} ({start_index})', end=" | ")
+                    start_index = executed_process[i][1] + 1
+                else:
+                    print(f'P{executed_process[i][0]} ({start_index} - {executed_process[i][1]})', end=" | ")
+                    start_index = executed_process[i][1] + 1
 
         # Print the last process separately
         if (start_index == executed_process[-1][1]):
@@ -188,7 +188,7 @@ if __name__ == "__main__":
         [1, 3, 4],
         [2, 5, 9],
         [3, 8, 4],
-        [4, 2, 7],
+        [4, 0, 7],
         [5, 12, 6]
     ]
 
