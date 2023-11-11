@@ -102,7 +102,7 @@ class RoundRobin:
         t_time = RoundRobin.calculateTurnaroundTime(process_data)
         w_time = RoundRobin.calculateWaitingTime(process_data)
         
-        RoundRobin.ganttChart(executed_process, process_data)
+        RoundRobin.ganttChart(executed_process, min_arrival_time)
         RoundRobin.printData(process_data, t_time, w_time, time_slice)
 
         max_completed_time = executed_process[-1][1] #Get max value for CPU scheduling 
@@ -110,25 +110,35 @@ class RoundRobin:
         RoundRobin.cpu_util(min_arrival_time, max_completed_time)
         
     @staticmethod
-    def ganttChart(executed_process, process_data):
+    def ganttChart(executed_process, min_arrival_time):
 
         print(f'Gantt Chart:')
         start_index = 0
         for i in range(len(executed_process) - 1):
-            if (start_index == 0):
-                if (start_index == executed_process[i][1] - 1):
-                    print(f'P{executed_process[i][0]} ({0})', end=" | ")
-                    start_index = executed_process[i][1] + 1
+            if (min_arrival_time != 0):
+                if (min_arrival_time == 1):
+                    print(f'idle ({0})', end=" | ")
+                    start_index = 1
+                    min_arrival_time = 0
                 else:
-                    print(f'P{executed_process[i][0]} ({0} - {executed_process[i][1]})', end=" | ")
+                    print(f'idle ({0} - {executed_process[i][1]})', end=" | ")
                     start_index = executed_process[i][1] + 1
+                    min_arrival_time = 0
             else:
-                if (start_index == executed_process[i][1]):
-                    print(f'P{executed_process[i][0]} ({start_index})', end=" | ")
-                    start_index = executed_process[i][1] + 1
+                if (start_index == 0):
+                    if (start_index == executed_process[i][1] - 1):
+                        print(f'P{executed_process[i][0]} ({0})', end=" | ")
+                        start_index = executed_process[i][1] + 1
+                    else:
+                        print(f'P{executed_process[i][0]} ({0} - {executed_process[i][1]})', end=" | ")
+                        start_index = executed_process[i][1] + 1
                 else:
-                    print(f'P{executed_process[i][0]} ({start_index} - {executed_process[i][1]})', end=" | ")
-                    start_index = executed_process[i][1] + 1
+                    if (start_index == executed_process[i][1]):
+                        print(f'P{executed_process[i][0]} ({start_index})', end=" | ")
+                        start_index = executed_process[i][1] + 1
+                    else:
+                        print(f'P{executed_process[i][0]} ({start_index} - {executed_process[i][1]})', end=" | ")
+                        start_index = executed_process[i][1] + 1
 
         # Print the last process separately
         if (start_index == executed_process[-1][1]):
@@ -178,7 +188,7 @@ if __name__ == "__main__":
         [1, 3, 4],
         [2, 5, 9],
         [3, 8, 4],
-        [4, 0, 7],
+        [4, 2, 7],
         [5, 12, 6]
     ]
 
