@@ -99,7 +99,7 @@ def make_ganttchart(processes):
             if x[1] == x[2]:
                 print(f"{x[0]} ({x[1]}) |", end=" ")
             else:
-                print(f"{x[0]} ({x[1]+1}-{x[2]}) |", end=" ")
+                print(f"{x[0]} ({x[1]}-{x[2]}) |", end=" ")
     print()
                 
         
@@ -107,18 +107,16 @@ def make_ganttchart(processes):
         
         
 print()
-print("Priority Non-Preemptive CPU Scheduling Algorithm")
+print("Priority Non-Preemptive CPU Scheduling Algorithm:")
 print()
 
 #use this if you want to input the process details yourself
-'''
 num_of_processes = int(input("Enter the number of processes included: "))
 processes = []
-
 for x in range(1, num_of_processes + 1):
     processes.append(input_process(x))
-'''
 
+'''
 #testing algo without input
 processes = [
         Process(1, 3, 4, 2),
@@ -128,7 +126,11 @@ processes = [
         Process(5, 12, 6, 1)
     ]
 num_of_processes = 5
+'''
 
+print()
+print("Priority Non-Preemptive CPU Scheduling Algorithm:")
+print()
     
 #rearrangement of process based on algo // SJF
 processes = prioritynp_algo(processes)
