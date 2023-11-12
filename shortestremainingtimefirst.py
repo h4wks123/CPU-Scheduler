@@ -91,14 +91,14 @@ def srtf_scheduling(processes):
 
         if start_time == end_time:  # If the process only occurs at a single time point
             if start_time == 1:
-                print(f" {current_process} ({0}-{1}) | ", end="")
+                print(f" {current_process} ({0} - {1}) | ", end="")
             else:
-                print(f" {current_process} ({start_time}) | ", end="")
+                print(f" {current_process} ({start_time - 1} - {end_time}) | ", end="")
         else:
             if start_time == 1:
                 print(f"{current_process} ({start_time - 1}-{end_time}) | ", end="")
             else:
-                print(f" {current_process} ({start_time}-{end_time}) | ", end="")
+                print(f" {current_process} ({start_time - 1}-{end_time}) | ", end="")
         i += 1
 
     print()
@@ -108,11 +108,11 @@ def srtf_scheduling(processes):
 if __name__ == "__main__":
     # Test Case: 5 processes
     processes_test = [
-        Process(1, 4, 5),
-        Process(2, 8, 10),
-        Process(3, 3, 7),
-        Process(4, 6, 8),
-        Process(5, 0, 6)
+        Process(1, 3, 4),
+        Process(2, 9, 5),
+        Process(3, 10, 9),
+        Process(4, 8, 12),
+        Process(5, 12, 10)
     ]
 
     sequence = srtf_scheduling(processes_test)

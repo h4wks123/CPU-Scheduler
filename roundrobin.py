@@ -134,10 +134,10 @@ class RoundRobin:
                     start_index = executed_process[i][1] + 1
             else:
                 if (start_index == executed_process[i][1]):
-                    print(f'P{executed_process[i][0]} ({start_index})', end=" | ")
+                    print(f'P{executed_process[i][0]} ({start_index - 1}) - ({start_index})', end=" | ")
                     start_index = executed_process[i][1] + 1
                 else:
-                    print(f'P{executed_process[i][0]} ({start_index} - {executed_process[i][1]})', end=" | ")
+                    print(f'P{executed_process[i][0]} ({start_index - 1} - {executed_process[i][1]})', end=" | ")
                     start_index = executed_process[i][1] + 1
 
         # Print the last process separately

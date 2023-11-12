@@ -95,14 +95,14 @@ def priority_preemptive_scheduling_with_gantt(processes):
 
         if start_time == end_time:  # If the process only occurs at a single time point
             if start_time == 0:
-                print(f" {process_name} ({0}-{1}) | ", end="")
+                print(f" {process_name} ({0} - {1}) | ", end="")
             else:
-                print(f" {process_name} ({start_time + 1}) | ", end="")
+                print(f" {process_name} ({start_time} - {end_time + 1}) | ", end="")
         else:
             if start_time == 0:
-                print(f"{process_name} ({0}-{end_time + 1}) | ", end="")
+                print(f"{process_name} ({0} - {end_time + 1}) | ", end="")
             else:
-                print(f" {process_name} ({start_time + 1}-{end_time + 1}) | ", end="")
+                print(f" {process_name} ({start_time} - {end_time + 1}) | ", end="")
         i += 1
 
     print()
@@ -117,11 +117,11 @@ def priority_preemptive_scheduling_with_gantt(processes):
 
 if __name__ == "__main__":
     processes = [
-        Process(1, 3, 4, 2),
-        Process(2, 5, 9, 1),
-        Process(3, 8, 4, 2),
-        Process(4, 0, 7, 1),
-        Process(5, 12, 6, 1)
+        Process(1, 1, 5, 3),
+        Process(2, 3, 7, 2),
+        Process(3, 6, 3, 1),
+        Process(4, 9, 8, 4),
+        Process(5, 11, 6, 5)
     ]
 
     sequence = priority_preemptive_scheduling_with_gantt(processes)
