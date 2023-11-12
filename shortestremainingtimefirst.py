@@ -80,7 +80,7 @@ def srtf_scheduling(processes):
     print("Gantt Chart:")
     i = 0
 
-    while i < len(sequence):
+    while i < len(sequence): #Stored value starts at one
         current_process = sequence[i][0]
         start_time = sequence[i][1]
 
@@ -90,13 +90,15 @@ def srtf_scheduling(processes):
         end_time = sequence[i][1]
 
         if start_time == end_time:  # If the process only occurs at a single time point
-            print(f" {current_process} ({start_time}) | ", end="")
+            if start_time == 1:
+                print(f" {current_process} ({0} - {1}) | ", end="")
+            else:
+                print(f" {current_process} ({start_time - 1} - {end_time}) | ", end="")
         else:
             if start_time == 1:
                 print(f"{current_process} ({start_time - 1}-{end_time}) | ", end="")
             else:
-                print(f" {current_process} ({start_time}-{end_time}) | ", end="")
-
+                print(f" {current_process} ({start_time - 1}-{end_time}) | ", end="")
         i += 1
 
     print()
@@ -104,19 +106,49 @@ def srtf_scheduling(processes):
 
 
 if __name__ == "__main__":
+    print()
+    print("Shortest Remaining Time First CPU Scheduling Algorithm")
+    print()
+    
+    #'''
+    #use this if you want to input the process details yourself
+    num_of_processes = int(input("Enter the number of processes included: "))
+    processes_test = []
+    for x in range(1, num_of_processes + 1):
+        processes_test.append(input_process(x))
+    #'''
+    
+    '''    
     # Test Case: 5 processes
     processes_test = [
-        Process(1, 4, 5),
-        Process(2, 8, 10),
-        Process(3, 3, 7),
-        Process(4, 6, 8),
-        Process(5, 0, 6)
+        Process(1, 3, 4),
+        Process(2, 5, 9),
+        Process(3, 8, 4),
+        Process(4, 0, 7),
+        Process(5, 12, 6)
     ]
+    '''
 
+    print()
+    print("Shortest Remaining Time First CPU Scheduling Algorithm")
+    print()
     sequence = srtf_scheduling(processes_test)
-
     display_table(processes_test)
     cpu_util(sequence)
 
     print(f"Average Turnaround Time: {avg_tt(processes_test):.2f}")
     print(f"Average Waiting Time: {avg_wt(processes_test):.2f}")
+
+        # Second Test Case
+        # Process(1, 3, 4),
+        # Process(2, 5, 9),
+        # Process(3, 8, 4),
+        # Process(4, 0, 7),
+        # Process(5, 12, 6)
+
+        # Third Test Case
+        # Process(1, 3, 4),
+        # Process(2, 9, 5),
+        # Process(3, 10, 9),
+        # Process(4, 8, 12),
+        # Process(5, 12, 10)
