@@ -184,17 +184,18 @@ class RoundRobin:
         print(f'Average Waiting Time: {average_waiting_time}')
 
 if __name__ == "__main__":
-    processes_test = [
-        [1, 3, 4],
-        [2, 5, 9],
-        [3, 8, 4],
-        [4, 0, 7],
-        [5, 12, 6]
-    ]
+    num_processes = int(input("Enter the number of processes: "))
+    
+    processes_test = []
+    for i in range(1, num_processes + 1):
+        arrival_time = int(input(f"Enter arrival time for process {i}: "))
+        burst_time = int(input(f"Enter burst time for process {i}: "))
+        processes_test.append([i, arrival_time, burst_time])
 
-    time_quantum = 3
+    time_quantum = int(input("Enter the time quantum: "))
 
     RoundRobin.schedulingProcess(processes_test, time_quantum)
+
 
     # Second Test Case
     # [1, 3, 4],
