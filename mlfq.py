@@ -189,9 +189,11 @@ def Tableoutput(dataset):
 
     AVGTAT = sum([data.turnaround for data in dataset]) / len(dataset)
     AVGWT = sum([data.waittime for data in dataset]) / len(dataset)
+    cpu_utilization = ((max(data.endtime for data in dataset)) - min(data.arrival_time for data in dataset)) / (max(data.endtime for data in dataset)) * 100
 
     print(f"\nAverage Turnaround Time: {AVGTAT:.1f}")
     print(f"Average Waiting Time: {AVGWT:.1f}")
+    print(f"CPU Utilization: {cpu_utilization:.1f}%")  
 
 if __name__ == "__main__":
 
@@ -238,3 +240,5 @@ if __name__ == "__main__":
 # Process(5, 12, 6, 5)
 # First Time Quantum 2
 # Second Time Quantum 3
+
+

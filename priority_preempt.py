@@ -115,15 +115,38 @@ def priority_preemptive_scheduling_with_gantt(processes):
 
     return time_chart
 
-if __name__ == "__main__":
-    processes = [
-        Process(1, 1, 5, 3),
-        Process(2, 3, 7, 2),
-        Process(3, 6, 3, 1),
-        Process(4, 9, 8, 4),
-        Process(5, 11, 6, 5)
-    ]
+def input_process(process_num):
+    arrival_time = int(input(f"Enter arrival time for process {process_num}: "))   
+    burst_time = int(input(f"Enter burst time for process {process_num}: "))
+    priority = int(input(f"Enter priority number for process {process_num}: "))
+    return Process(process_num, arrival_time, burst_time, priority)    
 
+if __name__ == "__main__":
+    print()
+    print("Priority Preemptive CPU Scheduling Algorithm")
+    print()
+    
+    #use this if you want to input the process details yourself
+    num_of_processes = int(input("Enter the number of processes included: "))
+    processes = []
+    for x in range(1, num_of_processes + 1):
+        processes.append(input_process(x))
+    
+    '''
+    #use test cases without user input
+    processes = [
+        Process(1, 9, 10, 1),
+        Process(2, 13, 9, 2),
+        Process(3, 10, 7, 4),
+        Process(4, 3, 3, 5),
+        Process(5, 11, 11, 3)
+    ]
+    '''
+    
+    print()
+    print("Priority Preemptive CPU Scheduling Algorithm")
+    print()
+    
     sequence = priority_preemptive_scheduling_with_gantt(processes)
     cpu_util(sequence)
 

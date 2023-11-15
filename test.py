@@ -1,166 +1,146 @@
-from prettytable import PrettyTable
+def sort_by_arrival(processes):
+    return sorted(processes, key=lambda x: x[1])
 
-class Process:
-    def __init__(self, name, arrival_time, burst_time):
-        self.name = name
-        self.arrival_time = arrival_time
-        self.burst_time = burst_time
-        self.remaining_time = burst_time
-        self.queue = 1
-        self.resptime = -1
-        self.completion_time = 0
-        self.endtime = 0  # Initialize endtime to 0
-        self.waiting_time = 0  # Initialize waiting time to 0
+def sort_by_priority(processes):
+    return sorted(processes, key=lambda x: (x[2], x[3]))
 
-def scheduling(dataset, Q1, Q2):
-    time = 0
-    proc = dataset
-    R2 = []
-    R3 = []
-    FCFS = []
-    compprocesses = []
-    FirstGANTT = []
-    SecondGANTT = []
-    ThirdGANTT = []
+def sort_by_end(processes):
+    return sorted(processes, key=lambda x: x[4])
 
-    while len(compprocesses) < len(proc):
-        for process in proc:
-            if process.arrival_time <= time and process.queue == 1 and process not in R2 and process not in compprocesses:
-                R2.append(process)
-                FirstGANTT.append((process.name, time))
+def display_table(process_list):
+    print(f"\n\n{'PID':<11}{'AT':<4}{'BT':<4}{'ET':<4}{'TT':<4}{'WT':<4}")
+    print("-" * 30)
+    
+    for process in process_list:
+        process_id, arrival_time, burst_time, end_time, turnaround_time, waiting_time = process
+        print(f"P{process_id:<10}{arrival_time:<4}{burst_time:<4}{end_time:<4}{turnaround_time:<4}{waiting_time:<4}")
+        print("-" * 30)
 
-        if len(R2) > 0:
-            k = R2.pop(0)
-            if k.resptime == -1:
-                k.resptime = time - k.arrival_time
-            if k.remaining_time > Q1:
-                k.remaining_time -= Q1
-                time += Q1
-                k.queue = Q1
-                k.waiting_time += time - k.completion_time  # Update waiting time
-                R3.append(k)
+def display_metrics(process_list):
+    sorted_by_end_time = sort_by_end(process_list)
+    
+    total_turnaround_time = sum(p[4] for p in process_list)
+    total_waiting_time = sum(p[5] for p in process_list)
+
+    print("\n\nCPU Utilization: " + str(round(total_burst_time / sorted_by_end_time[-1][3] * 100, 2)) + "%")
+    print("Average Turnaround Time: " + str(round(total_turnaround_time / len(process_list), 2)) + " ms")
+    print("Average Waiting Time: " + str(round(total_waiting_time / len(process_list), 2)) + " ms")
+
+def display_chart(timeline):
+    print("\n\nGantt Chart:")
+    print("-" * 45)
+    
+    if timeline[0][1] != 0:
+        print(0)
+        print("     " + "idle")
+
+    for t in timeline:
+        print(t[1])
+        print("     P" + str(t[0][0]))
+
+print("--- Multilevel Feedback Queue --- \n")
+
+num_processes = int(input("How many processes would you like to compute? "))
+quantum_1 = int(input("Enter the time quantum for the first layer: "))
+quantum_2 = int(input("Enter the time quantum for the second layer: "))
+
+layer_1 = []
+layer_2 = []
+layer_3 = []
+
+process_list = []
+final_list = []
+
+running_processes = []
+completed_processes = []
+
+current_time = 0
+current_process_idx = 0
+
+total_burst_time = 0
+remaining_burst_time = 0
+
+timeline = []
+
+print("Enter the arrival time and burst time separated by spaces.\n")
+
+for p in range(num_processes):
+    init_info = input(f"P{p+1}: ")
+    
+    process_list.append(list(map(int, init_info.split())))
+    process_list[p].insert(0, p+1)
+    process_list[p].append(1)
+    
+    final_list.append(list(map(int, init_info.split())))
+    final_list[p].insert(0, p+1)
+    
+    total_burst_time += process_list[p][2]
+
+sorted_by_arrival_time = sort_by_arrival(process_list)
+current_time = sorted_by_arrival_time[0][1]
+
+remaining_burst_time = total_burst_time
+
+while remaining_burst_time != 0:
+    while sorted_by_arrival_time and sorted_by_arrival_time[0][1] <= current_time:
+        layer_1.append(sorted_by_arrival_time.pop(0))
+    
+    if layer_1:
+        if layer_1[0][3] == 1:
+            if layer_1[0][2] <= quantum_1:
+                current_time += layer_1[0][2]
+                remaining_burst_time -= layer_1[0][2]
+                
+                final_list[layer_1[0][0] - 1].append(current_time)
+                
+                layer_1.pop(0)
             else:
-                time += k.remaining_time
-                k.remaining_time = 0
-                k.completion_time = time
-                k.endtime = time
-                compprocesses.append(k)
-                FirstGANTT.append((k.name, k.endtime, k.waiting_time))
-        else:
-            for process in proc:
-                if process.arrival_time <= time and process.queue == 2 and process not in R3 and process not in compprocesses:
-                    R3.append(process)
-                    SecondGANTT.append((process.name, time))
-
-            if len(R3) > 0:
-                k = R3.pop(0)
-                if k.resptime == -1:
-                    k.resptime = time - k.arrival_time
-                if k.remaining_time > Q2:
-                    k.remaining_time -= Q2
-                    time += Q2
-                    k.queue = Q2
-                    k.waiting_time += time - k.completion_time  # Update waiting time
-                    FCFS.append(k)
-                else:
-                    time += k.remaining_time
-                    k.remaining_time = 0
-                    k.completion_time = time
-                    k.endtime = time
-                    compprocesses.append(k)
-                    SecondGANTT.append((k.name, k.endtime, k.waiting_time))
-            else:
-                for process in proc:
-                    if process.arrival_time <= time and process.queue == 3 and process not in FCFS and process not in compprocesses:
-                        FCFS.append(process)
-                        ThirdGANTT.append((process.name, time))
-
-                if len(FCFS) > 0:
-                    k = FCFS.pop(0)
-                    if k.resptime == -1:
-                        k.resptime = time - k.arrival_time
-                    time += k.remaining_time
-                    k.remaining_time = 0
-                    k.completion_time = time
-                    k.endtime = time
-                    compprocesses.append(k)
-                    ThirdGANTT.append((k.name, k.endtime, k.waiting_time))
-                else:
-                    time += 1
-
-    for process in compprocesses:
-        process.turnaround = process.completion_time - process.arrival_time
-        process.waittime = process.turnaround - process.burst_time
-        process.reldelay = round(process.waittime / process.burst_time, 2)
-
-    GanttOutputs(FirstGANTT, SecondGANTT, ThirdGANTT)
-    return compprocesses
-
-def GanttOutputs(FirstGANTT, SecondGANTT, ThirdGANTT):
-    print("First GANTT:")
-    print("--------------")
-    print(GanttChart(FirstGANTT))
-    print("\nSecond GANTT:")
-    print("--------------")
-    print(GanttChart(SecondGANTT))
-    print("\nThird GANTT:")
-    print("--------------")
-    print(GanttChart(ThirdGANTT))
-
-def GanttChart(gantt_data):
-
-    min_arrival_time = gantt_data[0][1]
-    start_index = min_arrival_time
-    result = []
-
-    for i in range(len(gantt_data) - 1):
-        if start_index == gantt_data[i + 1][1]:
-            result.append(f'P{gantt_data[i][0]} ({start_index})')
-            start_index = gantt_data[i + 1][1] + 1
-        else:
-            result.append(f'P{gantt_data[i][0]} ({start_index} - {gantt_data[i + 1][1] - 1})')
-            start_index = gantt_data[i + 1][1]
-
-    # Append the last process separately
-    if start_index == gantt_data[-1][1]:
-        result.append(f'P{gantt_data[-1][0]} ({start_index})')
+                current_time += quantum_1
+                
+                while sorted_by_arrival_time and sorted_by_arrival_time[0][1] <= current_time:
+                    layer_1.append(sorted_by_arrival_time.pop(0))
+                
+                layer_1[0][2] -= quantum_1
+                layer_1[0][3] += 1
+                layer_2.append(layer_1.pop(0))
+                
+                remaining_burst_time -= quantum_1
     else:
-        result.append(f'P{gantt_data[-1][0]} ({start_index} - {gantt_data[-1][1]})')
+        if layer_2:
+            if layer_2[0][2] <= quantum_2:
+                current_time += layer_2[0][2]
+                remaining_burst_time -= layer_2[0][2]
+                
+                final_list[layer_2[0][0] - 1].append(current_time)
+                
+                layer_2.pop(0)
+            else:
+                current_time += quantum_2
+                
+                while sorted_by_arrival_time and sorted_by_arrival_time[0][1] <= current_time:
+                    layer_2.append(sorted_by_arrival_time.pop(0))
+                
+                layer_2[0][2] -= quantum_2
+                layer_2[0][3] += 1
+                layer_3.append(layer_2.pop(0))
+                
+                remaining_burst_time -= quantum_2
+        elif layer_3:
+            layer_3 = sort_by_arrival(layer_3)
+            
+            current_time += layer_3[0][2]
+            remaining_burst_time -= layer_3[0][2]
+            
+            final_list[layer_3[0][0] - 1].append(current_time)
+            
+            layer_3.pop(0)
+        else:
+            current_time += 1
+    print(current_time)
 
-    return " | ".join(result)
+for p in range(num_processes):
+    final_list[p].append(final_list[p][3] - final_list[p][1])
+    final_list[p].append(final_list[p][4] - final_list[p][2])
 
-
-def Tableoutput(dataset):
-    Ta = PrettyTable()
-    Ta.field_names = ["Process ID", "Arrival Time", "Burst Time", "Completion Time", "Turnaround Time", "Waiting Time"]
-    dataset.sort(key=lambda x: x.name)
-    for row in dataset:
-        Ta.add_row([row.name, row.arrival_time, row.burst_time, row.endtime, row.turnaround, row.waiting_time])
-    print(Ta)
-
-    AVGTAT = sum([data.turnaround for data in dataset]) / len(dataset)
-    AVGWT = sum([data.waittime for data in dataset]) / len(dataset)
-    AVGRT = sum([data.resptime for data in dataset]) / len(dataset)
-    AVGRD = sum([data.reldelay for data in dataset]) / len(dataset)
-
-    print(f"\nAvG TAT: {AVGTAT:.1f}")
-    print(f"AvG WT: {AVGWT:.1f}")
-    print(f"AvG RT: {AVGRT:.1f}")
-    print(f"AvG RD: {AVGRD:.1f}")
-
-data = [
-    Process(1, 3, 4),
-    Process(2, 5, 9),
-    Process(3, 8, 4),
-    Process(4, 0, 7),
-    Process(5, 12, 6)
-]
-
-#Time Slices
-Q1 = 2
-Q2 = 3
-
-#CPU sched versions (WALA PANI)
-
-result = scheduling(data, Q1, Q2)
-Tableoutput(result)
+display_table(final_list)
+display_metrics(final_list)

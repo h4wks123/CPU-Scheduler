@@ -106,6 +106,19 @@ def srtf_scheduling(processes):
 
 
 if __name__ == "__main__":
+    print()
+    print("Shortest Remaining Time First CPU Scheduling Algorithm")
+    print()
+    
+    #'''
+    #use this if you want to input the process details yourself
+    num_of_processes = int(input("Enter the number of processes included: "))
+    processes_test = []
+    for x in range(1, num_of_processes + 1):
+        processes_test.append(input_process(x))
+    #'''
+    
+    '''    
     # Test Case: 5 processes
     processes_test = [
         Process(1, 3, 4),
@@ -114,9 +127,12 @@ if __name__ == "__main__":
         Process(4, 8, 12),
         Process(5, 12, 10)
     ]
+    '''
 
+    print()
+    print("Shortest Remaining Time First CPU Scheduling Algorithm")
+    print()
     sequence = srtf_scheduling(processes_test)
-
     display_table(processes_test)
     cpu_util(sequence)
 
