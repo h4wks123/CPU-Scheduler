@@ -35,7 +35,7 @@ def FirstQuantum(data, Q1, Q2, Q3):
                 demodataset[i].level -= 1
 
                 # Check if the next process exists and if its arrival_time is less than the current_time
-                if i + 1 < len(demodataset) and current_time < demodataset[i + 1].arrival_time and demodataset[i].level == 1:
+                if i + 1 < len(demodataset) and current_time < demodataset[i + 1].arrival_time and demodataset[i].level == 1 and demodataset[i].burst_time != 0:
                     if demodataset[x].burst_time < Q2:
                         current_time += demodataset[x].burst_time
                         SecondGantt.append({'name': demodataset[x].name, 'current_time': current_time, 'end_time': demodataset[x].burst_time})
@@ -214,16 +214,15 @@ def TableOutput(FirstGantt, SecondGantt, ThirdGantt):
 
 if __name__ == "__main__":
 
-    # Q1 = 10
-    # Q2 = 15
-    # Q3 = 3
+    # Q1 = 2
+    # Q2 = 3
+    # Q3 = 1
     # data = [
-    #     (1, 5, 30, 4, 2),
-    #     (2, 25, 15, 3, 2),
-    #     (3, 15, 25, 1, 2),
-    #     (4, 10, 10, 1, 2),
-    #     (5, 20, 35, 2, 2),
-    #     (6, 13, 5, 5, 2)          
+    #     (1, 3, 4, 0, 2),
+    #     (2, 5, 9, 0, 2),
+    #     (3, 8, 4, 0, 2),
+    #     (4, 0, 7, 0, 2),
+    #     (5, 12, 6, 0, 2)      
     # ]
 
     print("Choose a CPU scheduling method for the third queue:")
@@ -263,14 +262,6 @@ if __name__ == "__main__":
     #     (3, 8, 4, 0, 2),
     #     (4, 0, 7, 0, 2),
     #     (5, 12, 6, 0, 2)    
-    # ]
-
-    # data = [
-    #     (1, 5, 14, 0, 2),
-    #     (2, 8, 2, 0, 2),
-    #     (3, 25, 5, 0, 2),
-    #     (4, 27, 2, 0, 2),
-    #     (5, 29, 2, 0, 2)    
     # ]
 
     # data = [
