@@ -41,14 +41,12 @@ def display_metrics(process_list):
 def display_chart(timeline):
     print("\n\nGantt Chart:")
     print("-" * 45)
-    
-    if timeline[0][1] != 0:
-        print(0)
-        print("     " + "idle")
 
+    print(0)
+    
     for t in timeline:
+        print("     idle" if t[2] == 0 else "     P" + str(t[2]))
         print(t[1])
-        print("     P" + str(t[0][0]))
         
 print("--- Multilevel Feedback Queue --- \n")
 processes = int(input("How many processes would you like to compute? "))
@@ -95,29 +93,40 @@ remaining_burst_time = total_burst_time
 while remaining_burst_time != 0:
     while len(sorted_by_arrival_time) > 0 and sorted_by_arrival_time[0][1] <= current_time:
         layer_1.append(sorted_by_arrival_time[0])
+        if current_process_idx == 0:
+            if len(timeline) == 0 or timeline[-1][1] != current_time:
+                timeline.append([sorted_by_arrival_time[0], current_time, current_process_idx])
+                current_process_idx = sorted_by_arrival_time[0][0]
         sorted_by_arrival_time.pop(0)
     
     if len(layer_1) > 0:
-        if layer_1[0][3] == 1:
-            if layer_1[0][2] <= quantum_1:
-                current_time += layer_1[0][2]
-                remaining_burst_time -= layer_1[0][2]
-                
-                final_list[layer_1[0][0]-1].append(current_time)
-                
-                layer_1.pop(0)
-            else:
-                current_time += quantum_1
-                
-                while len(sorted_by_arrival_time) > 0 and sorted_by_arrival_time[0][1] <= current_time:
-                    layer_1.append(sorted_by_arrival_time[0])
-                    sorted_by_arrival_time.pop(0)
-                
-                layer_1[0][2] -= quantum_1
-                layer_1[0][3] += 1
-                layer_2.append(layer_1.pop(0))
-                
-                remaining_burst_time -= quantum_1
+        if layer_1[0][2] <= quantum_1:
+            current_time += layer_1[0][2]
+            remaining_burst_time -= layer_1[0][2]
+            
+            final_list[layer_1[0][0]-1].append(current_time)
+            
+            current_process_idx = layer_1[0][0]
+            timeline.append([layer_1[0], current_time, current_process_idx])
+            current_process_idx = 0
+            
+            layer_1.pop(0)
+        else:
+            current_time += quantum_1
+            
+            current_process_idx = layer_1[0][0]
+            timeline.append([layer_1[0], current_time, current_process_idx])
+            current_process_idx = 0
+            
+            while len(sorted_by_arrival_time) > 0 and sorted_by_arrival_time[0][1] <= current_time:
+                layer_1.append(sorted_by_arrival_time[0])
+                sorted_by_arrival_time.pop(0)
+            
+            layer_1[0][2] -= quantum_1
+            layer_1[0][3] += 1
+            layer_2.append(layer_1.pop(0))
+            
+            remaining_burst_time -= quantum_1
     else:
         if len(layer_2) > 0:
             if layer_2[0][2] <= quantum_2:
@@ -126,9 +135,17 @@ while remaining_burst_time != 0:
                 
                 final_list[layer_2[0][0]-1].append(current_time)
                 
+                current_process_idx = layer_2[0][0]
+                timeline.append([layer_2[0], current_time, current_process_idx])
+                current_process_idx = 0
+                
                 layer_2.pop(0)
             else:
                 current_time += quantum_2
+                
+                current_process_idx = layer_2[0][0]
+                timeline.append([layer_2[0], current_time, current_process_idx])
+                current_process_idx = 0
                 
                 while len(sorted_by_arrival_time) > 0 and sorted_by_arrival_time[0][1] <= current_time:
                     layer_2.append(sorted_by_arrival_time[0])
@@ -147,6 +164,10 @@ while remaining_burst_time != 0:
             
             final_list[layer_3[0][0]-1].append(current_time)
             
+            current_process_idx = layer_3[0][0]
+            timeline.append([layer_3[0], current_time, current_process_idx])
+            current_process_idx = 0
+            
             layer_3.pop(0)
         else:
             current_time += 1
@@ -158,3 +179,4 @@ for p in range(processes):
         
 display_table(final_list)
 display_metrics(final_list)
+display_chart(timeline)
