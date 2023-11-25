@@ -184,6 +184,8 @@ class RoundRobin:
         print(f'Average Waiting Time: {average_waiting_time}')
 
 if __name__ == "__main__":
+    print("ROUND ROBIN ALGORITHM:")
+    print("")
     num_processes = int(input("Enter the number of processes: "))
     
     processes_test = []
