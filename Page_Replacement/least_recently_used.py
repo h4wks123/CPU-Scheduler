@@ -4,6 +4,7 @@ def LeastRecentlyUsed(frames, referenceString):
     arr = [] #This two dimensional array holds the dimensional array of page replacement
     pageFault = [''] * len(referenceString)  #This holds the page fault if hit or not
     counter = [] #This is a one dimensional array that counts the least used per frame
+    pl = [''] * len(referenceString) #This one dimensional array will contain string parameters for printing the page log
 
     for i in range(frames):
         arr.append([-1] * len(referenceString))  # Initialize arr with -1 values
@@ -41,32 +42,50 @@ def LeastRecentlyUsed(frames, referenceString):
         fcfs = -1
         
         for y in range(frames):
-            if x >= 2 and referenceString[x] == arr[y][x]:
+            if referenceString[x] != -1 and referenceString[x] == arr[y][x]:
                 replacer = y
                 counter[y] = 0
                 fcfs = 0
                 pageFault[x] = 'H'
+                pl[x] = PageReplacementLog(3, y, referenceString[x], -1)
                 break
             elif testCase < counter[y]:
                 testCase = counter[y]
                 replacer = y
                 fcfs = 0
                 smaller = 0
+                pl[x] = PageReplacementLog(2, y, referenceString[x], arr[y][x])
             elif arr[y][x] == -1:
                 replacer = y
                 fcfs = 0
+                pl[x] = PageReplacementLog(1, y, referenceString[x], -1)
                 break
             
-        arr[replacer][x] = referenceString[x]
-
         if smaller == 0:
             counter[replacer] = 0
         elif fcfs == -1:
             counter[replacer] = 0
+            pl[x] = PageReplacementLog(4, y, referenceString[x], arr[0][x])
+        
+        arr[replacer][x] = referenceString[x]
 
+    displayLogs(pl)
     displayFrames(arr, referenceString, frames, pageFault)
+    displayMetrics(pageFault)
+    displayMetrics(pageFault)
 
 
+#Storing of Page Replacement Logs
+def PageReplacementLog (pagefault, y, referenceString, arrVal):
+    if pagefault == 4:
+        return f"FAULT  : Page {referenceString} replaced Page {arrVal} in frame #1"
+    elif pagefault == 3:
+        return f"HIT    : Page {referenceString} found in frame #{y + 1}"
+    elif pagefault == 2:
+        return f"FAULT  : Page {referenceString} replaced Page {arrVal} in frame #{y + 1}"
+    elif pagefault == 1:
+        return f"FAULT  : Page {referenceString} placed in frame #{y + 1}"
+    
 #Prints the Frame chart
 def displayFrames(arr, referenceString, frames, pageFault):
 
@@ -120,6 +139,40 @@ def displayFrames(arr, referenceString, frames, pageFault):
         print("{:<4}".format("-----"), end="")
 
     print("")
+
+
+#Prints the Page Replacement Logs
+def displayLogs (pl):
+    print("")
+    print("[-----PAGE REPLACEMENT LOGS-----]")
+    print("")
+    for index, log_message in enumerate(pl, start=1):
+        print(f"{index:<3} {log_message}")
+
+
+def displayMetrics(pageFault):
+    
+    fault = hit = 0
+
+    for i in range(len(pageFault)):
+        if pageFault[i] == 'F':
+            fault += 1
+        else:
+            hit += 1
+
+    total = fault + hit
+
+    print("")
+    print("[-----PERFORMANCE METRICS-----]")
+    print("")
+    print(f"No. of Faults: {fault:<20}", end="")
+    print(f"No. of Hits: {hit}")
+    print(f"Fault Percentage: {fault / total * 100:.2f}%{'' :<11}", end="")
+    print(f"Hit Percentage: {hit / total * 100:.2f}%")
+    print("")
+
+
+
 
 # Get input from the user as a string
 
