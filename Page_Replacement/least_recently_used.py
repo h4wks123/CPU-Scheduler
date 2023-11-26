@@ -1,4 +1,5 @@
 #LRU page replacement algorithm 
+import copy
 
 def LeastRecentlyUsed(frames, referenceString):
     arr = [] #This two dimensional array holds the dimensional array of page replacement
@@ -23,7 +24,6 @@ def LeastRecentlyUsed(frames, referenceString):
                 else:
                     arr[y][x] = arr[y][x - 1]
         
-        #Change this code
         #all counts must be incremented before comparing
         #first priority is if there is a number that is same
         #second priority is if there is comparing the largest "counter[y]"
@@ -69,9 +69,9 @@ def LeastRecentlyUsed(frames, referenceString):
         
         arr[replacer][x] = referenceString[x]
 
-    displayLogs(pl)
     displayFrames(arr, referenceString, frames, pageFault)
-    displayMetrics(pageFault)
+    displayLogs(pl)
+    displayStrateTrackingLogs(arr, referenceString, frames)
     displayMetrics(pageFault)
 
 
@@ -148,8 +148,47 @@ def displayLogs (pl):
     print("")
     for index, log_message in enumerate(pl, start=1):
         print(f"{index:<3} {log_message}")
+    print("")
 
 
+#Prints the State Tracking Logs
+def displayStrateTrackingLogs (arrVal, referenceString, frames):
+    print("")
+    print("[-----STATE TRACKING LOGS-----]")
+    print(">>>LEGEND: Least Recently Used -> Most Recently Used")
+    print("")
+    counter = [0] * frames  # Initialize counter list with zeros
+    newArrVal = copy.deepcopy(arrVal)  # Create a deep copy of arrVal
+
+    # Use the length of the referenceString to avoid index out of range
+    for x in range(len(referenceString)):
+
+        for y in range(frames):
+            if arrVal[y][x] == -1:
+                counter[y] = 0
+            elif x > 0 and arrVal[y][x] != arrVal[y][x - 1] and arrVal[y][x - 1] != -1:
+                counter[y] = 0
+            else:
+                counter[y] += 1
+
+        for y in range(frames - 1):  # Fix the loop range
+            for z in range(frames - y - 1):
+                temp = 0
+                if counter[z] < counter[z + 1]:
+                    temp = newArrVal[z][x]
+                    newArrVal[z][x] = newArrVal[z + 1][x]  # Fix index
+                    newArrVal[z + 1][x] = temp
+
+    for x in range(len(referenceString)):
+        print(f"[{x + 1:>2}]", end=" [")
+        for y in range(frames):
+            print(f"{newArrVal[y][x]:>3}", end=", " if y < frames - 1 else "  ")
+        print("]")
+
+    print("")
+
+
+#Prints the Performance Metrics
 def displayMetrics(pageFault):
     
     fault = hit = 0
