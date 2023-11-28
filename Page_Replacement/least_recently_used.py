@@ -78,13 +78,13 @@ def LeastRecentlyUsed(frames, referenceString):
 #Storing of Page Replacement Logs
 def PageReplacementLog (pagefault, y, referenceString, arrVal):
     if pagefault == 4:
-        return f"FAULT  : Page {referenceString} replaced Page {arrVal} in frame #1"
+        return f"❌ FAULT  : Page {referenceString} replaced Page {arrVal} in frame #1"
     elif pagefault == 3:
-        return f"HIT    : Page {referenceString} found in frame #{y + 1}"
+        return f"💥 HIT    : Page {referenceString} found in frame #{y + 1}"
     elif pagefault == 2:
-        return f"FAULT  : Page {referenceString} replaced Page {arrVal} in frame #{y + 1}"
+        return f"❌ FAULT  : Page {referenceString} replaced Page {arrVal} in frame #{y + 1}"
     elif pagefault == 1:
-        return f"FAULT  : Page {referenceString} placed in frame #{y + 1}"
+        return f"❌ FAULT  : Page {referenceString} placed in frame #{y + 1}"
     
 #Prints the Frame chart
 def displayFrames(arr, referenceString, frames, pageFault):

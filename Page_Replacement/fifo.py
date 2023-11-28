@@ -105,11 +105,11 @@ def displayLogs (page_logs):
     print("[-----PAGE REPLACEMENT LOGS-----]")
     for index, sublist in enumerate(page_logs, start=1):
         if sublist[3] == 1:
-            print(f"{index:<3} {sublist[0]:<6} : Page {sublist[1]} placed in frame {sublist[2]}")
+            print(f"{index:<3} ❌ {sublist[0]:<6} : Page {sublist[1]} placed in frame {sublist[2]}")
         elif sublist[3] == 2:
-            print(f"{index:<3} {sublist[0]:<6} : Page {sublist[1]} replaced Page {sublist[4]} in frame {sublist[2]}")
+            print(f"{index:<3} ❌ {sublist[0]:<6} : Page {sublist[1]} replaced Page {sublist[4]} in frame {sublist[2]}")
         elif sublist[3] == 3:
-            print(f"{index:<3} {sublist[0]:<6} : Page {sublist[1]} found in frame {sublist[2]}")
+            print(f"{index:<3} 💥 {sublist[0]:<6} : Page {sublist[1]} found in frame {sublist[2]}")
 
 def performanceMetrics(fault, hit):
     total = fault + hit
