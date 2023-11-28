@@ -1,0 +1,92 @@
+#LRU page replacement algorithm 
+import copy
+
+def LeastFrequentlyUsed(frames, referenceString):
+    arr = [] #This two dimensional array holds the dimensional array of page replacement
+    referenceStringCopy = copy.deepcopy(referenceString) #This copies the reference string for FCFS
+    pageFault = [''] * len(referenceString)  #This holds the page fault if hit or not
+    counter = list(set(referenceString)) #This is a one dimensional array that counts the least frequently used value
+    pl = [''] * len(referenceString) #This one dimensional array will contain string parameters for printing the page log
+
+    for i in range(frames):
+        arr.append([-1] * len(referenceString))  # Initialize arr with -1 values
+        counter.append(0)
+           
+    for x in range(len(referenceString)):
+        
+        same = -1 #Checks if naa duplicate or wala
+        traversal = 0 #Globally traverses the duplicated array for FCFS
+        
+        if x >= 1:                          #Copies the array prior to the new one
+            for y in range(frames):
+                if arr[y][x - 1] == -1:
+                    break
+                else:
+                    arr[y][x] = arr[y][x - 1]
+
+        for y in range(frames):
+            if referenceString[x] != -1 and referenceString[x] == arr[y][x]: #If HIT
+                
+                same = 0
+
+                for z in range(counter):
+                    if counter[z] == referenceString[z]:
+                        counter[1][z] += 1
+
+        hold = [] #Holds all of the counter and their duplicate lowest values
+        holdTraversal = 0 #traverses the hold func
+
+        if same == -1:
+            for y in len(counter):
+                if counter[1][y] != 0:
+                    hold[holdTraversal] = counter[1][y]
+                    y = z
+                    while z in range(counter):
+                        if z + 1 < range(counter) and hold[holdTraversal] == counter[z]: #If there exists a duplicate for the first non zero number
+                            holdTraversal += 1
+                            hold[holdTraversal] = counter[1][z]
+                        elif counter[z] < hold[holdTraversal]:  #If there is a number that exists smaller than the current one
+                            holdTraversal = 0
+                            hold.clear()
+                            hold[holdTraversal] = counter[1][z]
+                            y = z
+                            break
+        
+            non_zero_count = hold.count(0)  
+            if len(hold) - non_zero_count > 1: #If naay more than 1 index
+                while traversal in referenceStringCopy:
+                    for y in referenceStringCopy:
+                        if referenceStringCopy[traversal] == hold[y]:
+                            for z in range(frames):
+                                if arr[z][x] == hold[z]:
+                                    arr[z][x] = referenceString[x]
+                    traversal += 1       
+
+            else:
+                for y in range(frames):
+                    if arr[y][x] == hold[0]:
+                        arr[y][x] = hold[0]
+                
+        
+
+
+# Get input from the user as a string
+
+print("")
+print("[-----LFU PAGE REPLACEMENT ALGORITHM-----]")
+print("")
+
+input_string = input("Enter the reference string: ")
+numbers_as_strings = input_string.split()
+referenceString = [int(num) for num in numbers_as_strings]
+
+frames = int(input("Enter the number of frames: "))
+
+LeastFrequentlyUsed(frames, referenceString)
+
+
+#Test Case 1
+#7 0 1 2 0 3 0 4 2 3 0 3 2 1 2
+
+#Test Case 2
+#5 2 1 0 2 1 3 2 1 1 3 0 3
