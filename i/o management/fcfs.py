@@ -3,16 +3,17 @@ import copy
 
 def get_input():
     print("[-----First Come First Serve-----]")
+    num_cylinders = int(input("Enter the number of cylinders: "))
     numbers_input = input("Enter points separated by spaces: ")
     reference_list = list(map(int, numbers_input.split()))
-    return reference_list
+    return reference_list, num_cylinders
 
 def fcfs_io_management(numbers):
     # no need to change sequence anymore cz fcfs
     sequence = copy.deepcopy(numbers)  
     return sequence
     
-def plot_sequence(numbers, seek_time):
+def plot_sequence(numbers, seek_time, num_cylinders):
     y_values = range(1, len(numbers) + 1)  # Use range as y-values
     
     plt.scatter(numbers, y_values, color='blue', marker='o', label='Points')
@@ -26,6 +27,7 @@ def plot_sequence(numbers, seek_time):
     plt.title('First Come First Serve')
     plt.xlabel(f'Seek Time: {seek_time}')
     plt.ylabel('Number of Points')
+    plt.xlim(0, num_cylinders)
     plt.gca().invert_yaxis()  # Invert y-axis to display in reverse
     plt.grid(True)
     
@@ -78,10 +80,10 @@ def display_sequence(sequence):
         print(f"Step {i}: {num}")
 
 # Perform the Functions
-ref_string = get_input()
+ref_string, cylinders = get_input()
 sequence = fcfs_io_management(ref_string)
 r1, r2, st = get_seektime(sequence)
-plot_sequence(sequence, st)
+plot_sequence(sequence, st, cylinders)
 
 '''
 # Static
