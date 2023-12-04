@@ -17,7 +17,22 @@ def plot_points(x, y, seek_time, num_cylinders, formula):
     plt.show()
 
 def shortest_seek_time_first(current_position, requests):
-    sorted_requests = sorted(requests, key=lambda req: abs(req - current_position))
+    sorted_requests = [current_position]
+
+    for _ in range(len(requests)):
+        temp = -1
+        num = float('inf') 
+        for idx, req in enumerate(requests):
+            if abs(sorted_requests[-1] - req) < num and req != -1:
+                temp = idx
+                num = abs(sorted_requests[-1] - req)
+        if temp != -1:
+            sorted_requests.append(requests[temp])
+            requests[temp] = -1  
+    
+    if len(sorted_requests) > 1:
+        sorted_requests.pop(0)
+
     return sorted_requests
 
 def calculate_seek_time(sequence):
@@ -70,3 +85,6 @@ if __name__ == "__main__":
 
 #Test case 1
 #53 98 183 37 122 14 124 65 67
+
+#Test case 2
+#65 117 58 112 7 101 73 105 38 88
