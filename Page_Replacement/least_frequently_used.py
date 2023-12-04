@@ -85,7 +85,7 @@ def LeastFrequentlyUsed(frames, referenceString):
                         break
                     
                 org = cop
-   
+
             #If condition has no duplicates             
             elif len(referenceLib) == 1:
                 for y in range(frames):

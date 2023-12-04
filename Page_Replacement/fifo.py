@@ -164,3 +164,4 @@ pages = [int(num) for num in numbers_as_strings]
 capacity = int(input("Enter the number of frames: "))
 
 integrate_FIFO_algorithm(capacity, pages)
+#7 0 1 2 0 3 4 2 3 0 3 2 1 2 0 1 7

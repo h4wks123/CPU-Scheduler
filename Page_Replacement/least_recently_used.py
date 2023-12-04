@@ -71,7 +71,7 @@ def LeastRecentlyUsed(frames, referenceString):
 
     displayFrames(arr, referenceString, frames, pageFault)
     displayLogs(pl)
-    displayStrateTrackingLogs(arr, referenceString, frames)
+    # displayStrateTrackingLogs(arr, referenceString, frames)
     displayMetrics(pageFault)
 
 
